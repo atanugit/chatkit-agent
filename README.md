@@ -17,7 +17,7 @@ This repository is the simplest way to bootstrap a [ChatKit](http://openai.githu
 ### 1. Install dependencies
 
 ```bash
-npm install
+npm install 
 ```
 
 ### 2. Create your environment file
