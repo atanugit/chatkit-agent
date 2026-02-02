@@ -261,8 +261,8 @@ export function ChatKitPanel({
     [isWorkflowConfigured, setErrorState]
   );
 
-  // Pre-warm the session on component mount
-  us
+  const chatkit = useChatKit({
+    api: { getClientSecret },
     theme: {
       colorScheme: theme,
       ...getThemeConfig(theme),
@@ -323,32 +323,32 @@ export function ChatKitPanel({
     onThreadChange: () => {
       processedFacts.current.clear();
     },
-    onError: ({ error, retryable = true }: { error: unknown; retryable?: boolean }) => {
-      // Log the error
-      console.error("ChatKit error", error);
-
-      // Set error state with retry capability
-      if (isMountedRef.current) {
-        const detail =
-          error instanceof Error ? error.message : "ChatKit encountered an error";
-        setErrorState({
-          integration: detail,
-          retryable: retryable,
-        });
-      }
-
-      // Implement automatic retry with exponential backoff for transient errors
-      if (retryable && isMountedRef.current) {
-        const isTransientError =
-          error instanceof Error &&
-          (error.message.includes("timeout") ||
-            error.message.includes("ECONNREFUSED") ||
-            error.message.includes("429") ||
-            error.message.includes("503"));
- }: { error: unknown }) => {
+    onError: ({ error }: { error: unknown }) => {
       // Note that Chatkit UI handles errors for your users.
       // Thus, your app code doesn't need to display errors on UI.
-      console.error("ChatKit error", error); className={
+      console.error("ChatKit error", error);
+    },
+  });
+
+  const activeError = errors.session ?? errors.integration;
+  const blockingError = errors.script ?? activeError;
+
+  if (isDev) {
+    console.debug("[ChatKitPanel] render state", {
+      isInitializingSession,
+      hasControl: Boolean(chatkit.control),
+      scriptStatus,
+      hasError: Boolean(blockingError),
+      workflowId: WORKFLOW_ID,
+    });
+  }
+
+  return (
+    <div className="relative pb-8 flex h-[90vh] w-full rounded-2xl flex-col overflow-hidden bg-white shadow-sm transition-colors dark:bg-slate-900">
+      <ChatKit
+        key={widgetInstanceKey}
+        control={chatkit.control}
+        className={
           blockingError || isInitializingSession
             ? "pointer-events-none opacity-0"
             : "block h-full w-full"
