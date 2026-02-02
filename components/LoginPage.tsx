@@ -56,7 +56,7 @@ export function LoginPage({ onLoginSuccess }: LoginPageProps) {
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
                 placeholder="Enter your username"
-                className="mt-1 w-full rounded-lg border border-slate-300 bg-white px-4 py-2 text-slate-900 placeholder-slate-400 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-slate-600 dark:bg-slate-800 dark:text-white dark:placeholder-slate-500"
+                className="mt-1 w-full rounded-lg border border-slate-300 bg-white px-4 py-2 text-slate-900 placeholder-slate-400 focus:border-black focus:outline-none focus:ring-2 focus:ring-black dark:border-slate-600 dark:bg-slate-800 dark:text-white dark:placeholder-slate-500"
                 disabled={isLoading}
                 required
               />
@@ -75,7 +75,7 @@ export function LoginPage({ onLoginSuccess }: LoginPageProps) {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="Enter your password"
-                className="mt-1 w-full rounded-lg border border-slate-300 bg-white px-4 py-2 text-slate-900 placeholder-slate-400 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-slate-600 dark:bg-slate-800 dark:text-white dark:placeholder-slate-500"
+                className="mt-1 w-full rounded-lg border border-slate-300 bg-white px-4 py-2 text-slate-900 placeholder-slate-400 focus:border-black focus:outline-none focus:ring-2 focus:ring-black dark:border-slate-600 dark:bg-slate-800 dark:text-white dark:placeholder-slate-500"
                 disabled={isLoading}
                 required
               />
@@ -90,15 +90,11 @@ export function LoginPage({ onLoginSuccess }: LoginPageProps) {
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full rounded-lg bg-blue-600 px-4 py-2 font-medium text-white hover:bg-blue-700 disabled:bg-slate-400 dark:bg-blue-700 dark:hover:bg-blue-600 dark:disabled:bg-slate-600"
+              className="w-full rounded-lg bg-black px-4 py-2 font-medium text-white hover:bg-gray-900 disabled:bg-slate-400 dark:bg-black dark:hover:bg-gray-900 dark:disabled:bg-slate-600"
             >
               {isLoading ? "Signing in..." : "Sign In"}
             </button>
           </form>
-
-          <p className="mt-6 text-center text-xs text-slate-500 dark:text-slate-400">
-            Demo credentials: atanu / Agent@AI
-          </p>
         </div>
       </div>
     </main>
