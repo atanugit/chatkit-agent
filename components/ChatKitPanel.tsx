@@ -61,8 +61,6 @@ export function ChatKitPanel({
       : "pending"
   );
   const [widgetInstanceKey, setWidgetInstanceKey] = useState(0);
-  const clientSecretRef = useRef<string | null>(null);
-  const sessionWarmingRef = useRef(false);
 
   const setErrorState = useCallback((updates: Partial<ErrorState>) => {
     setErrors((current) => ({ ...current, ...updates }));
@@ -239,9 +237,6 @@ export function ChatKitPanel({
           throw new Error("Missing client secret in response");
         }
 
-        // Cache the client secret for session warming
-        clientSecretRef.current = clientSecret;
-
         if (isMountedRef.current) {
           setErrorState({ session: null, integration: null });
         }
@@ -267,26 +262,7 @@ export function ChatKitPanel({
   );
 
   // Pre-warm the session on component mount
-  useEffect(() => {
-    if (!isWorkflowConfigured || !isBrowser || sessionWarmingRef.current) {
-      return;
-    }
-
-    sessionWarmingRef.current = true;
-
-    if (isDev) {
-      console.info("[ChatKitPanel] Pre-warming session...");
-    }
-
-    getClientSecret(null).catch((error) => {
-      if (isDev) {
-        console.warn("[ChatKitPanel] Session pre-warming failed", error);
-      }
-    });
-  }, [isWorkflowConfigured, getClientSecret]);
-
-  const chatkit = useChatKit({
-    api: { getClientSecret },
+  us
     theme: {
       colorScheme: theme,
       ...getThemeConfig(theme),
@@ -369,58 +345,10 @@ export function ChatKitPanel({
             error.message.includes("ECONNREFUSED") ||
             error.message.includes("429") ||
             error.message.includes("503"));
-
-        if (isTransientError) {
-          // Exponential backoff: 1s, 2s, 4s
-          const retryDelays = [1000, 2000, 4000];
-          let retryCount = 0;
-
-          const attemptRetry = () => {
-            if (retryCount < retryDelays.length) {
-              const delay = retryDelays[retryCount];
-              retryCount++;
-
-              if (isDev) {
-                console.info(
-                  `[ChatKitPanel] Attempting auto-retry (attempt ${retryCount}) after ${delay}ms`,
-                  error
-                );
-              }
-
-              setTimeout(() => {
-                if (isMountedRef.current && chatkit.control) {
-                  // Trigger widget to retry the last message
-                  chatkit.control?.retryLastMessage?.();
-                }
-              }, delay);
-            }
-          };
-
-          attemptRetry();
-        }
-      }
-    },
-  });
-
-  const activeError = errors.session ?? errors.integration;
-  const blockingError = errors.script ?? activeError;
-
-  if (isDev) {
-    console.debug("[ChatKitPanel] render state", {
-      isInitializingSession,
-      hasControl: Boolean(chatkit.control),
-      scriptStatus,
-      hasError: Boolean(blockingError),
-      workflowId: WORKFLOW_ID,
-    });
-  }
-
-  return (
-    <div className="relative pb-8 flex h-[90vh] w-full rounded-2xl flex-col overflow-hidden bg-white shadow-sm transition-colors dark:bg-slate-900">
-      <ChatKit
-        key={widgetInstanceKey}
-        control={chatkit.control}
-        className={
+ }: { error: unknown }) => {
+      // Note that Chatkit UI handles errors for your users.
+      // Thus, your app code doesn't need to display errors on UI.
+      console.error("ChatKit error", error); className={
           blockingError || isInitializingSession
             ? "pointer-events-none opacity-0"
             : "block h-full w-full"
